@@ -1,10 +1,8 @@
 package com.esp;
 
-import com.esp.models.Esp;
 import com.esp.models.User;
-import com.esp.user.UserConfig;
 import com.esp.user.UserRepositoryCustom;
-import com.esp.user.UserService;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -18,7 +16,7 @@ import javax.persistence.EntityManagerFactory;
 /**This calss is used to test the Repository layer*/
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) //to show we will use real database
-@Rollback(value = false)    //I dont want to rollback transaction, transaction are committed to the DB
+@Rollback(false)    //I dont want to rollback transaction, transaction are committed to the DB
 public class UserRepositoryTests {
 
     @Autowired
@@ -34,9 +32,21 @@ public class UserRepositoryTests {
         return emf.createEntityManager();
     } */  // To perform assertion with the db = getEmf();
 
+    public User saveAndReturnSavedUSer(){
+        User user = new User();
+        user.setEmail("testEmail@email.com");
+        user.setUsername("testUsername");
+        user.setPassword("testPassword");
+        user.setFirstname("testFirstname");
+        user.setLastname("testLastname");
+        user.setPhonenumber(123654);
+        var savedUser = userRepo.save(user);
+        return savedUser;
+    }
+
     @Test
     public void testCreateNewUser(){
-        User user = new User();
+       User user = new User();
 
         user.setEmail("testEmail@email.com");
         user.setUsername("testUsername");
@@ -54,5 +64,17 @@ public class UserRepositoryTests {
         System.out.println("saved: " + getSavedUser);
 
        assert(savedUser.getEmail()).equals(getSavedUser.getEmail());
+    }
+
+    @Test
+    public void testFindUserBxEmail(){
+        String email = "testEmail@email.com";
+
+        var savedUser = saveAndReturnSavedUSer();
+
+        User user = userRepo.findByEmail(email);
+
+        assertThat(user).isEqualTo(savedUser);
+        assertThat(user).isNotNull();
     }
 }
