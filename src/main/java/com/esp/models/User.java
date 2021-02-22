@@ -10,10 +10,15 @@ public class User {
     @Id
     @Column
     private long id;
+    @Column(nullable = false, unique = true, length = 45)
     private String username;
+    @Column(nullable = false, length = 20)
     private String password;
+    @Column(nullable = false, length = 20)
     private String firstname;
+    @Column(nullable = false, length = 20)
     private String lastname;
+    @Column(nullable = false, unique = true, length = 45)
     private String email;
     private int phonenumber;
     private String subscription;

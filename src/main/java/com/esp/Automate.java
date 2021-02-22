@@ -127,27 +127,5 @@ public class Automate {
 
         return new ResponseEntity<OutputStream>(out, HttpStatus.OK);
 
-
-      /*
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        var out = response.getOutputStream();
-
-        // Copy the contents of the file to the output stream
-        byte[] buf = new byte[1024];
-        int count = 0;
-        while ((count = responseEntity.read(buf)) >= 0) {
-            out.write(buf, 0, count);
-        }
-        out.close();
-        responseEntity.close(); */
-
-        //creates new file image and returns the image Id
-      /* var id = espService.getCapturedAndSavedImgId("auto_img");
-        var resp = httpInstance2.execute(new HttpGet("http://localhost:8080/api/image/img-file/" + id));
-
-        var respObj = resp.getEntity().getContent();
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        StreamUtils.copy(respObj, response.getOutputStream());
-        httpInstance2.close();*/
     }
 }
