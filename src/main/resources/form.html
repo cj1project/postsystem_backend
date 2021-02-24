@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="src/css/formCss.css">
+</head>
+<body>
+
+<div class="centerForm">
+    <!--"http://localhost:8080/login"-->
+    <form action="@http://localhost:8080/login" method="post">
+        <div class="imgcontainer">
+            <img src="src/img/pix.jpg" alt="Avatar" class="avatar">
+        </div>
+
+        <div class="container">
+            <p><label for="username"><b>Username</b></label>
+                <input id = "username_id" type="email" placeholder="Enter Username" name="username" required>
+            </p>
+            <p></p><label for="password"><b>Password</b></label>
+            <input id="psw_id" type="password" placeholder="Enter Password" name="password" required></p>
+
+            <button id="login" type="submit">Login</button>
+            <label>
+                <input type="checkbox" checked="checked" name="remember"> Remember me
+            </label>
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="cancelbtn">Cancel</button>
+            <span class="psw">Forgot <a href="#">password?</a></span>
+        </div>
+    </form>
+</div>
+
+<script src="src/js/fromTs/login.js" defer></script>
+</body>
+</html>

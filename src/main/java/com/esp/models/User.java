@@ -1,5 +1,7 @@
 package com.esp.models;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Random;
@@ -12,9 +14,9 @@ public class User {
     private long id;
     @Column(nullable = false, unique = true, length = 45)
     private String username;
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 64)
     private String password;
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length =20)
     private String firstname;
     @Column(nullable = false, length = 20)
     private String lastname;
@@ -60,6 +62,9 @@ public class User {
         Random rand = new Random();
         this.id = rand.nextLong();
         this.username = name;
+    }
+
+    public User(String username, String password, boolean b, boolean b1, boolean b2, boolean b3, List<GrantedAuthority> user) {
     }
 
     public long getId() {

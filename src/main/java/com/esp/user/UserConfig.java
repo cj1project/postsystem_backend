@@ -29,26 +29,6 @@ public class UserConfig {
         return ds;
     }
 
-   // @Bean
-    public LocalContainerEntityManagerFactoryBean userEntityManagerFactory(
-            EntityManagerFactoryBuilder builder) {
-        return builder
-                .dataSource(dataSource())
-                .packages("com.esp.models")
-                .persistenceUnit("models")
-                .build();
-    }
-
-    //@Bean
-    public LocalContainerEntityManagerFactoryBean espEntityManagerFactory(
-            EntityManagerFactoryBuilder builder) {
-        return builder
-                .dataSource(dataSource())
-                .packages(Esp.class)
-                .persistenceUnit("esp")
-                .build();
-    }
-
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
@@ -78,6 +58,26 @@ public class UserConfig {
     }
 
 
+
+    // @Bean
+    public LocalContainerEntityManagerFactoryBean userEntityManagerFactory(
+            EntityManagerFactoryBuilder builder) {
+        return builder
+                .dataSource(dataSource())
+                .packages("com.esp.models")
+                .persistenceUnit("models")
+                .build();
+    }
+
+    //@Bean
+    public LocalContainerEntityManagerFactoryBean espEntityManagerFactory(
+            EntityManagerFactoryBuilder builder) {
+        return builder
+                .dataSource(dataSource())
+                .packages(Esp.class)
+                .persistenceUnit("esp")
+                .build();
+    }
 /* @Bean
     public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
         return new PersistenceExceptionTranslationPostProcessor();
