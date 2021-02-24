@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import java.time.Duration;
 
 @RestController
-@RequestMapping("/api/automate")
+@RequestMapping("/user/api/automate")
 public class Automate {
 
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(5);
@@ -50,7 +50,7 @@ public class Automate {
 
         var user = localApiClient
                 .get()
-                .uri("/api/user/get-user/" + id)
+                .uri("/user/api/user/get-user/" + id)
                 .retrieve()
                 .bodyToMono(User.class)
                 .block(REQUEST_TIMEOUT);
@@ -65,7 +65,7 @@ public class Automate {
         //capture and confirm that it was successful
         var capture = localApiClient
                 .get()
-                .uri("/api/esp/capture")
+                .uri("/user/api/esp/capture")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block(REQUEST_TIMEOUT);
@@ -78,7 +78,7 @@ public class Automate {
         var id = espService.getCapturedAndSavedImgId("auto_take");
         var getCapturedImg = localApiClient
                 .get()
-                .uri("/api/image/getEspImgOutput/on_img")
+                .uri("/user/api/image/getEspImgOutput/on_img")
                 .retrieve()
                 .bodyToMono(OutputStream.class)
                 .block(REQUEST_TIMEOUT);
@@ -93,7 +93,7 @@ public class Automate {
     public ResponseEntity<OutputStream> autoMode(HttpServletResponse response) throws Exception {
         //try
         CloseableHttpClient httpInstance1 = HttpClientBuilder.create().build();
-        var takePhoto =  httpInstance1.execute(new HttpGet("http://localhost:8080/api/esp/capture"));
+        var takePhoto =  httpInstance1.execute(new HttpGet("http://localhost:8080/user/api/esp/capture"));
 
         if(takePhoto == null){
             throw new Exception("Error capturing picture");
@@ -102,7 +102,7 @@ public class Automate {
 
         CloseableHttpClient client = HttpClientBuilder.create().build();
         //var resp = client.execute(new HttpGet("http://localhost:8080/api/image/getEspImgOutput/auto_img"));
-        HttpGet request = new HttpGet("http://localhost:8080/api/image/getEspImgOutput/auto_img");
+        HttpGet request = new HttpGet("http://localhost:8080/user/api/image/getEspImgOutput/auto_img");
         var res =  client.execute(request);
         var responseEntity = res.getEntity().getContent();
         StreamUtils.copy(responseEntity, response.getOutputStream());

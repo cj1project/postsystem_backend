@@ -16,9 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.html.HTML;
 
 @RestController
-@RequestMapping("/api/user")
-//@Slf4j
-@Validated
+@RequestMapping("/user/api")
 public class UserController {
 
    // private final PasswordEncoder passwordEncoder;

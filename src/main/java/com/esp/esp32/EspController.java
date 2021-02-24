@@ -11,7 +11,7 @@ import java.awt.print.PrinterException;
 import java.io.*;
 
 @RestController
-@RequestMapping("/api/esp")
+@RequestMapping("/user/api/esp")
 public class EspController {
 
     @Autowired

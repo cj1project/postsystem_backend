@@ -13,7 +13,7 @@ import java.awt.print.PrinterException;
 import java.io.*;
 
 @RestController
-@RequestMapping("/api/image")
+@RequestMapping("/user/api/image")
 public class ImageController {
     @Autowired
     private ImageService service;

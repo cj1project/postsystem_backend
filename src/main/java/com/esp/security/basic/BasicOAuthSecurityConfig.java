@@ -1,5 +1,6 @@
 package com.esp.security.basic;
 
+import com.esp.security.models.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,8 +42,9 @@ public class BasicOAuthSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception{
         http
                 .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/js/*")
-                .permitAll()
+                .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
+                .antMatchers("/user/api/**").hasRole(UserRole.USER.name())
+                .antMatchers("/admin/api/**").hasRole(UserRole.ADMIN.name())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -56,13 +58,13 @@ public class BasicOAuthSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetails userD = User.builder()
                             .username("username")
                             .password(passwordEncoder.encode("password"))
-                            .roles("STUDENT")
+                            .roles(UserRole.USER.name()) //ROLE_USER
                             .build();
 
         UserDetails userAdmin = User.builder()
                             .username("admin")
                             .password(passwordEncoder.encode("admin"))
-                            .roles("ADMIN")
+                            .roles(UserRole.ADMIN.name())  //ROLE_ADMIN
                             .build();
 
         return new InMemoryUserDetailsManager(userD, userAdmin);
