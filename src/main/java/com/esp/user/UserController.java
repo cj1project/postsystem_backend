@@ -1,6 +1,7 @@
 package com.esp.user;
 
 import com.esp.models.User;
+import com.esp.security.PasswordConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.dom4j.rule.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,18 +20,18 @@ import javax.swing.text.html.HTML;
 @RequestMapping("/user/api")
 public class UserController {
 
-   // private final PasswordEncoder passwordEncoder;
+   private final PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserService service;
 
-    /*public UserController(PasswordEncoder passwordEncoder) {
+    public UserController(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
     public PasswordEncoder getPasswordEncoder() {
         return passwordEncoder;
-    }*/
+    }
 
     @GetMapping("/home")
     public ModelAndView homeIndex(ModelAndView rsp, HttpServletResponse response)
@@ -51,8 +52,9 @@ public class UserController {
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public User register(@RequestBody User reg){
-       /* var encodedPassword = passwordEncoder.encode(reg.getPassword());
-        reg.setPassword(encodedPassword);*/
+
+        var encodedPassword = passwordEncoder.encode(reg.getPassword());
+        reg.setPassword(encodedPassword);
         return service.registerNewUser(reg);
     }
 
