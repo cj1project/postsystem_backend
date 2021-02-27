@@ -25,7 +25,7 @@ public class UserService implements UserRepository {
     }
 
     @Transactional
-    public User createUser() {
+    public User createEmptyUser() {
         User user = new User();
         try{
             EntityManager em = getEmf();

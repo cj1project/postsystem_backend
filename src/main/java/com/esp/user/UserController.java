@@ -33,11 +33,13 @@ public class UserController {
         return passwordEncoder;
     }
 
+    //hasRole('ROLE_') hasAnyRole('ROLE_') hasAuthority('permission') hasAnyAuthority('permission'), @PreAuthorize("hasAuthority('user:write')"
+
     @GetMapping("/home")
-    public ModelAndView homeIndex(ModelAndView rsp, HttpServletResponse response)
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_RESTRICTED_ADMIN', 'ROLE_ADMIN')")
+    public String homeIndex( )
     {
-        var s = rsp.addObject("index", "form.html");
-       return s;
+       return "User Home";
     }
     @PostMapping(value="/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String loginPage(){
@@ -46,6 +48,7 @@ public class UserController {
 
     //@PreAuthorize("")
     @GetMapping(value = "/homePage", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('user:read')")
     public String userHome(){
         return "this is the user home after  authentication";
     }
@@ -59,16 +62,19 @@ public class UserController {
     }
 
     @PostMapping(value = "/deregister", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('user:write')")
     public String deRegister(@RequestBody User user){
         return user.getFirstname() + ", You have successfully deRegistered";
     }
 
-    @PostMapping(name="/createUser", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json")
+    @PostMapping(value="/createEmptyUser", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json")
+    @PreAuthorize("hasAuthority('user:write')") //@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_RESTRICTED_ADMIN', 'ROLE_ADMIN')")
     public User createUser() {
-        return service.createUser();
+        return service.createEmptyUser();
     }
 
     @GetMapping(value = "/get-user/{id}", produces = "application/json")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_RESTRICTED_ADMIN', 'ROLE_ADMIN')")
     public User getUser(@PathVariable long id){
        return service.getUser(id);
     }
