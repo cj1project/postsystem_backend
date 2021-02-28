@@ -54,8 +54,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public User register(@RequestBody User reg){
-
+    public long register(@RequestBody User reg){
         var encodedPassword = passwordEncoder.encode(reg.getPassword());
         reg.setPassword(encodedPassword);
         return service.registerNewUser(reg);
@@ -77,6 +76,12 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_RESTRICTED_ADMIN', 'ROLE_ADMIN')")
     public User getUser(@PathVariable long id){
        return service.getUser(id);
+    }
+
+    @GetMapping(value = "/getUserData/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('user:write')")
+    public User getUserDate(@PathVariable long userId){
+        return service.userData(userId);
     }
 
 }

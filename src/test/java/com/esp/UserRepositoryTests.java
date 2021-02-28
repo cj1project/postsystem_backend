@@ -34,8 +34,8 @@ public class UserRepositoryTests {
 
     public User saveAndReturnSavedUSer(){
         User user = new User();
-        user.setEmail("testEmail@email.com");
-        user.setUsername("testUsername");
+        user.setEmail("test3@email.com");
+        user.setUsername("testUsername3");
         user.setPassword("testPassword");
         user.setFirstname("testFirstname");
         user.setLastname("testLastname");
@@ -48,8 +48,8 @@ public class UserRepositoryTests {
     public void testCreateNewUser(){
        User user = new User();
 
-        user.setEmail("testEmail@email.com");
-        user.setUsername("testUsername");
+        user.setEmail("test4@email.com");
+        user.setUsername("testUsername4");
         user.setPassword("testPassword");
         user.setFirstname("testFirstname");
         user.setLastname("testLastname");
@@ -67,8 +67,8 @@ public class UserRepositoryTests {
     }
 
     @Test
-    public void testFindUserBxEmail(){
-        String email = "testEmail@email.com";
+    public void testFindUserByEmail(){
+        String email = "test3@email.com";
 
         var savedUser = saveAndReturnSavedUSer();
 

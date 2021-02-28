@@ -40,7 +40,12 @@ public class UserService implements UserRepository {
         return user;
     }
 
-    public User registerNewUser(User user) {
+    public User userData(long  userId){
+        User user1 = getUser(userId);
+        return user1;
+    }
+
+    public long registerNewUser(User user) {
         Esp esp = new Esp();
         UserHistory hist = new UserHistory();
         esp.setId(user.getId());
@@ -56,7 +61,7 @@ public class UserService implements UserRepository {
             e.printStackTrace();
         }
 
-        return user;
+        return user.getId();
     }
 
 

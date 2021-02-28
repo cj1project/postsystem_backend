@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -51,7 +52,17 @@ public class BasicAuthSecurityConfigClean extends WebSecurityConfigurerAdapter {
                .anyRequest()
                .authenticated()
                .and()
-               .httpBasic();
+               .httpBasic()
+                .and()
+                .rememberMe()
+                .and()
+                .logout()
+                    .logoutUrl("/logout")
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                    .clearAuthentication(true)
+                    .invalidateHttpSession(true)
+                    .deleteCookies("SESSION")  //"remeber-me"
+                    .logoutSuccessUrl("/logout");
 
        // REST is stateless
       /* http.sessionManagement()
@@ -66,7 +77,7 @@ public class BasicAuthSecurityConfigClean extends WebSecurityConfigurerAdapter {
 
         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:63342")); // www - obligatory
     //      configuration.setAllowedOrigins(ImmutableList.of("*"));  //set access from all domains
-        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE"));
         configuration.setAllowCredentials(true);
         //configuration.addAllowedOrigin("http://localhost:63342");
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type" /*"Cache-Control", "host",*/ ));

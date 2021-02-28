@@ -50,7 +50,7 @@ public class Automate {
 
         var user = localApiClient
                 .get()
-                .uri("/user/api/user/get-user/" + id)
+                .uri("http://localhost:8080/user/api/user/get-user/" + id)
                 .retrieve()
                 .bodyToMono(User.class)
                 .block(REQUEST_TIMEOUT);
@@ -65,7 +65,7 @@ public class Automate {
         //capture and confirm that it was successful
         var capture = localApiClient
                 .get()
-                .uri("/user/api/esp/capture")
+                .uri("http://localhost:8080/user/api/esp/capture")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block(REQUEST_TIMEOUT);

@@ -56,8 +56,19 @@ public class FormBasedAuth extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .formLogin();
-    }
-*/
+                .loginPage("/login").permitAll
+                .defaultSuccessUrl("/dashboard", true)
+                .and()
+                .rememberMe()
+                .and()
+                .logout()
+                    .logoutUrl("/logout")
+                    .clearAuthentication(true)
+                    .invalidateHttpSession(true)
+                    .deleteCookies("SESSION")  //"remeber-me"
+                    .logoutSuccessUrl("/login")
+    }*/
+
   /*  @Override
     @Bean
     //Used to retrieve users from database (but lets use it for example for now
