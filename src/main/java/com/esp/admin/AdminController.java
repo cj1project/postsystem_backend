@@ -8,25 +8,22 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     @GetMapping("/home")
-    @PreAuthorize("hasAuthority('admin:read')")
     public String homeIndex() {
         return "Admin Security Testing Page";
     }
 
     @GetMapping("/userList")
-    @PreAuthorize("hasAuthority('admin:read')")
     public String userList() {
         return "Admin --> All Users List Page";
     }
 
     @PostMapping("/createUser")
-    @PreAuthorize("hasAuthority('admin:read')")
     public String createUser() {
         return "Admin Created User";
     }
 
     @DeleteMapping("/delete")
-    @PreAuthorize("hasAuthority('admin:write')")
+    //@PreAuthorize("hasAuthority('admin:write')")
     public String deleteUser() {
         return "Admin User Deleted!";
     }

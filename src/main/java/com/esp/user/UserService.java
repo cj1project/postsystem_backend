@@ -4,7 +4,6 @@ import com.esp.models.Esp;
 import com.esp.models.User;
 import com.esp.models.UserHistory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +11,7 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,6 +40,42 @@ public class UserService implements UserRepository {
         return user;
     }
 
+    public List<User> getAllUsers(){
+        List<User> user = new ArrayList<>();
+        try{
+            EntityManager em = getEmf();
+            em.getTransaction().begin();
+            TypedQuery<User> query = em.createQuery("SELECT user FROM User user", User.class); //@Query(value = "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)", nativeQuery = true)
+            user = query.getResultList();
+            em.getTransaction().commit();
+        } catch(EntityExistsException e) {
+            e.printStackTrace();
+        }
+        if(user == null){
+            System.out.println("User does not exist");
+        }
+        return user;
+    }
+
+    public User getUserWithUsername(String  username){
+        User user = null;
+        try{
+            EntityManager em = getEmf();
+            em.getTransaction().begin();
+            //em.find(ImageEntity.class, id);
+            TypedQuery<User> query = em.createQuery("SELECT user FROM User user WHERE user.username=?1", User.class); //@Query(value = "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)", nativeQuery = true)
+            query.setParameter(1, username);
+            user = query.getSingleResult();
+            em.getTransaction().commit();
+        } catch(EntityExistsException e) {
+            e.printStackTrace();
+        }
+        if(user == null){
+            System.out.println("User does not exist");
+        }
+        return user;
+    }
+
     public User userData(long  userId){
         User user1 = getUser(userId);
         return user1;
@@ -56,6 +92,7 @@ public class UserService implements UserRepository {
             em.merge(user);
             em.merge(esp);
             em.merge(hist);
+           // em.merge(role);
             em.getTransaction().commit();
         } catch(EntityExistsException e) {
             e.printStackTrace();
@@ -71,7 +108,7 @@ public class UserService implements UserRepository {
             EntityManager em = getEmf();
             em.getTransaction().begin();
             //em.find(ImageEntity.class, id);
-            TypedQuery<User> query = em.createQuery("SELECT user FROM User user WHERE user.id=?1", User.class); //@Query(value = "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)", nativeQuery = true)
+            TypedQuery<User> query = em.createQuery("SELECT user FROM User user WHERE user.user_id=?1", User.class); //@Query(value = "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)", nativeQuery = true)
             query.setParameter(1, id);
             user = query.getSingleResult();
             em.getTransaction().commit();
@@ -90,8 +127,8 @@ public class UserService implements UserRepository {
     }
 
     @Override
-    public List getUserList() {
-        return null;
+    public List<User> getUserList() {
+        return getAllUsers();
     }
 
 }

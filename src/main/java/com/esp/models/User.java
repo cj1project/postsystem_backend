@@ -3,15 +3,17 @@ package com.esp.models;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Random;
+import java.io.Serializable;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
-public class User {
+@Table(name = "users")
+public class User implements Serializable {
     @Id
     @Column
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long user_id;
     @Column(nullable = false, unique = true, length = 45)
     private String username;
     @Column(nullable = false, length = 64)
@@ -24,18 +26,31 @@ public class User {
     private String email;
     private int phonenumber;
     private String subscription;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    /*cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+        },
+        mappedBy = "role")*/
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
     @OneToOne
     private Esp esp;
     @OneToOne
     private UserHistory history;
+    private boolean enabled;
 
     public User() {
-        this.id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);
+        this.user_id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);
     }
 
     public User(String username, String password, String firstname, String lastname, String email, int phonenumber,
                 String subscription, Esp esp, UserHistory history) {
-        this.id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);
+        //this.user_id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);
         this.username = username;
         this.password = password;
         this.firstname = firstname;
@@ -48,19 +63,19 @@ public class User {
     }
 
     public User(String username, String password) {
-        this.id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);
+        this.user_id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);
         this.username = username;
         this.password = password;
-        this.esp = Esp.createNewEsp(id);
+        this.esp = Esp.createNewEsp(user_id);
     }
 
     public User(long id) {
-        this.id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);;
+        this.user_id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);;
     }
 
     public User(String name) {
         Random rand = new Random();
-        this.id = rand.nextLong();
+        this.user_id = rand.nextLong();
         this.username = name;
     }
 
@@ -68,11 +83,11 @@ public class User {
     }
 
     public long getId() {
-        return id;
+        return user_id;
     }
 
     public void setId(long id) {
-        this.id = id;
+        this.user_id = id;
     }
 
     public String getUsername() {
@@ -147,10 +162,18 @@ public class User {
         this.history = history;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "id=" + user_id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", firstname='" + firstname + '\'' +
@@ -166,4 +189,13 @@ public class User {
     public static User creatNewUserWithNewId(long id) {
         return new User(id);
     }
+
+    public  boolean enabled(){
+        return this.enabled;
+    }
+
+    public  void setEnabled(boolean enabled){
+        this.enabled = enabled;
+    }
+
 }
