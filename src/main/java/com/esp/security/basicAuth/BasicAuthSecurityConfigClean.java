@@ -1,4 +1,4 @@
-package com.esp.security.basicAuth;
+/*package com.esp.security.basicAuth;
 
 import com.esp.security.models.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,15 +58,15 @@ public class BasicAuthSecurityConfigClean extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                     .logoutUrl("/logout")
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) //NOTE: only use when you disable crsf otherwise no need for this line and write the logout with a POST and not a GET
                     .clearAuthentication(true)
                     .invalidateHttpSession(true)
                     .deleteCookies("SESSION")  //"remeber-me"
                     .logoutSuccessUrl("/logout");
 
        // REST is stateless
-      /* http.sessionManagement()
-               .sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
+      // http.sessionManagement()
+      //         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
 
@@ -80,16 +80,22 @@ public class BasicAuthSecurityConfigClean extends WebSecurityConfigurerAdapter {
         configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE"));
         configuration.setAllowCredentials(true);
         //configuration.addAllowedOrigin("http://localhost:63342");
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type" /*"Cache-Control", "host",*/ ));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type" /*"Cache-Control", "host",*//* ));
 
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }
+*/
+    //UserDetails with live Db
 
-    @Bean
+
+
+  /*
     //Used to retrieve users from database (but lets use it for example for now
+    // UserDetails with InMemory builder
+    @Bean
     protected UserDetailsService userDetailsService() {
         UserDetails user = User.builder()
                 .username("user")
@@ -113,6 +119,6 @@ public class BasicAuthSecurityConfigClean extends WebSecurityConfigurerAdapter {
                 .build();
 
         return new InMemoryUserDetailsManager(user, userAdmin, restrictedAdmin);
-    }
-}
+    }*/
+//}
 

@@ -11,14 +11,14 @@ public class BasicAuthenticationController {
 
     //@CrossOrigin(origins={ "http://localhost:63342", "http://localhost:3000", "http://localhost:4200" })
     @GetMapping(value = "/basic")
-    @PreAuthorize("hasAuthority('user:read')")
+    //@PreAuthorize("hasAuthority('user:read')")
     public AuthenticationBean authenticate() {
         //throw new RuntimeException("Some Error has Happened! Contact Support at ***-***");
         return new AuthenticationBean("You are authenticated");
     }
 
     @GetMapping(value = "/logout")
-    @PreAuthorize("hasAuthority('user:read')")
+    //@PreAuthorize("hasAuthority('user:read')")
     public AuthenticationBean logoutFunc() {
         return new AuthenticationBean("You are Logged out, redirected to login page");
     }

@@ -4,6 +4,7 @@ import com.esp.models.Role;
 import com.esp.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +28,6 @@ public class UserController {
         return passwordEncoder;
     }
 
-    //hasRole('ROLE_') hasAnyRole('ROLE_') hasAuthority('permission') hasAnyAuthority('permission'), @PreAuthorize("hasAuthority('user:write')"
-
     @GetMapping("/home")
    // @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_RESTRICTED_ADMIN', 'ROLE_ADMIN')")
     public String homeIndex( )
@@ -42,7 +41,7 @@ public class UserController {
 
     //@PreAuthorize("")
     @GetMapping(value = "/homePage", produces = MediaType.APPLICATION_JSON_VALUE)
-    //@PreAuthorize("hasRole('ROLE_USER_ROLE')")   //@RolesAllowed("hasAnyRole('ROLE_USER', 'ROLE_RESTRICTED_ADMIN', 'ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_USER')")   //@RolesAllowed("hasAnyRole('ROLE_USER', 'ROLE_RESTRICTED_ADMIN', 'ROLE_ADMIN')")
     public String userHome(){
         return "this is the user home after  authentication";
     }

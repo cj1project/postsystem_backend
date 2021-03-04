@@ -1,18 +1,18 @@
 package com.esp.user;
 
 import com.esp.models.Esp;
+import com.esp.models.Role;
 import com.esp.models.User;
 import com.esp.models.UserHistory;
+import com.esp.security.dbAuthWithRole.ResultFromDB;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.*;
+import java.sql.Array;
+import java.util.*;
 
 @Service
 public class UserService implements UserRepository {
@@ -23,6 +23,55 @@ public class UserService implements UserRepository {
     public EntityManager getEmf(){
         return emf.createEntityManager();
     }
+
+    public User getUserWithUserNameAndRole(String username){
+        //SELECT u, u.roles as role FROM User u WHERE u.username = :username AND u.user_id = role.role_id"
+
+        User user = null;
+        Role role = null;
+        List list = new ArrayList<ResultFromDB>();
+        try{
+            EntityManager em = getEmf();
+            em.getTransaction().begin();
+            Query hql = em.createQuery("SELECT NEW com.esp.security.dbAuthWithRole.ResultFromDB(user, role)" +
+                    "FROM User user, Role role WHERE user.username =?1 AND role.role_id = user.user_id");   //insert into user (id, name) values (?, ?)
+           hql.setParameter(1, username);
+            list = (List<ResultFromDB>) hql.getResultList();
+            em.getTransaction().commit();
+        } catch(EntityExistsException e) {
+            e.printStackTrace();
+        }
+
+        if(list == null){
+            throw new UsernameNotFoundException("username not found");
+        }
+
+        ResultFromDB resultFromDB = (ResultFromDB) list.get(0);
+        /*System.out.println("resultFromDB: " + resultFromDB);
+
+        System.out.println("resultFromDB.getUser(): " + resultFromDB.getUser());
+        System.out.println("resultFromDB.getRole(): " + resultFromDB.getRole());
+
+        user = resultFromDB.getUser();
+        role = resultFromDB.getRole();
+
+        var roleSet = new HashSet<Role>();
+
+        roleSet.add(resultFromDB.getRole());
+
+        System.out.println("roleSet: " + roleSet);
+        System.out.println("role: " + role.getName());
+        var uRole = user.getRoles();
+        for (Role value : uRole) {
+            System.out.println("value: " + value.getName());
+        }*/
+
+        return resultFromDB.getUser();
+    }
+
+    //SELECT user.user_id, user.username FROM User user INNER JOIN Role role ON user.user_id = role.role_id WHERE user.username =:username
+    // SELECT u, u.roles as role FROM User u WHERE u.username = :username AND u.user_id = role.role_id"
+    // SELECT user.user_id, role.role_id, role.name FROM User user, Role role WHERE user.username =:username AND role.role_id = user.user_id
 
     @Transactional
     public User createEmptyUser() {

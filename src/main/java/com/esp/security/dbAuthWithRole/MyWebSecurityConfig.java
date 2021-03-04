@@ -1,7 +1,6 @@
 package com.esp.security.dbAuthWithRole;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -10,7 +9,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -26,24 +24,25 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder; // Defined the Bean at the PasswordConfigClass
 
-    //private final UserDetailsServiceImpl myUserDetailsService;
+    private final UserDetailsServiceImpl myUserDetailsServiceImpl;
 
     @Autowired
-    public MyWebSecurityConfig(PasswordEncoder passwordEncoder) {
+    public MyWebSecurityConfig(PasswordEncoder passwordEncoder, UserDetailsServiceImpl myUserDetailsService) {
         this.passwordEncoder = passwordEncoder;
+        this.myUserDetailsServiceImpl = myUserDetailsService;
     }
 
-    /*@Bean
+   /* @Bean
     public UserDetailsService userDetailsService(){
         return new UserDetailsServiceImpl();
-    }
+    }*/
 
     //Used to retrieve users from database (but lets use it for example for now
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(myUserDetailsService);
+        provider.setUserDetailsService(myUserDetailsServiceImpl);
         return  provider;
     }
 
@@ -51,7 +50,7 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
- */
+
     //Configure with Roles
     @Override
     public void configure(HttpSecurity http) throws Exception{
@@ -60,7 +59,7 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/user/api/register").permitAll()
+                .antMatchers("/user/api/register", "/admin/api/register").permitAll()
                 .antMatchers("/", "index", "/css/*", "/js/*", "/user/api/register").permitAll()
 
                 .anyRequest()
@@ -68,7 +67,7 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //configuration with hasRole
                 /*
-                .antMatchers("/basic").hasRole("USER_ROLE")
+                .antMatchers("/user/api/**").hasRole("USER")
                 .antMatchers("/user/api/**").hasRole("USER_ROLE")
                 .antMatchers("/basic").hasRole(UserRole.USER.name())
                 .antMatchers("/user/api/**").hasRole(UserRole.USER.name())
