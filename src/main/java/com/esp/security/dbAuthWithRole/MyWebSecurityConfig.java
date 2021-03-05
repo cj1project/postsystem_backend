@@ -86,15 +86,17 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:63342")); // www - obligatory
         //      configuration.setAllowedOrigins(ImmutableList.of("*"));  //set access from all domains
-        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
         configuration.setAllowCredentials(true);
-        //configuration.addAllowedOrigin("http://localhost:63342");
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type" /*"Cache-Control", "host",*/ ));
+        //configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type" /*"Cache-Control", "host",*/ ));  // config.setAllowedHeaders(Arrays.asList("header1", "header2")); ("*")
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        //configuration.setExposedHeaders(configuration.getAllowedHeaders());
+        configuration.setMaxAge(3600L);
 
-            final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-            source.registerCorsConfiguration("/**", configuration);
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
 
-            return source;
+        return source;
         }
 
 }
