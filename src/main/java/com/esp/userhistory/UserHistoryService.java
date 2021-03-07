@@ -79,7 +79,7 @@ public class UserHistoryService {
             EntityManager em = getEmf();
             em.getTransaction().begin();
             //em.find(ImageEntity.class, id);
-            TypedQuery<Esp> query = em.createQuery("SELECT esp FROM Esp esp WHERE esp.id=?1", Esp.class); //@Query(value = "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)", nativeQuery = true)
+            TypedQuery<Esp> query = em.createQuery("SELECT esp FROM Esp esp WHERE esp.ID=?1", Esp.class); //@Query(value = "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)", nativeQuery = true)
             query.setParameter(1, id);
             esp = query.getSingleResult();
             em.getTransaction().commit();
@@ -98,7 +98,7 @@ public class UserHistoryService {
             EntityManager em = getEmf();
             em.getTransaction().begin();
             //em.find(ImageEntity.class, id);
-            TypedQuery<Esp> query = em.createQuery("SELECT esp FROM Esp esp WHERE esp.id=?1", Esp.class); //@Query(value = "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)", nativeQuery = true)
+            TypedQuery<Esp> query = em.createQuery("SELECT esp FROM Esp esp WHERE esp.ID=?1", Esp.class); //@Query(value = "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)", nativeQuery = true)
             query.setParameter(1, id);
             esp = query.getSingleResult();
             em.getTransaction().commit();

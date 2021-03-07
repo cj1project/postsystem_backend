@@ -1,19 +1,19 @@
 package com.esp.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+
+import com.sun.istack.NotNull;
+
+import javax.persistence.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
 public class ImageEntity {
     @Id
-    @Column
-    private Long id;
+    @Column(length = 64)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;  //long is a large string (mediumtext). It is not suitable for indexing in general.
     @Column
     private String name;
     @Column
@@ -22,18 +22,37 @@ public class ImageEntity {
     private LocalDate date;
     @Column
     private LocalTime time;
-    @OneToOne
+    @ManyToOne
     private Esp esp;
+    @OneToOne
+    private UserHistory history;
+    @Column(nullable = false)
+    private String user_id;
+
+   /* @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER) //MANY-TO-ONE BIDIRECTIONAL, this class is the OWNING SIDE of the association
+     @JoinTable(
+            name = "imageEntity_user",
+            joinColumns = @JoinColumn(name = "imageEntity_id", unique = true),
+            inverseJoinColumns = @JoinColumn(name = "user_id", unique = true)
+    )*/
 
     public ImageEntity(String name, File file) {
-        this.id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);
-       // var s = String.valueOf(this.id);
         this.name = name;
         this.file = file;
         this.date = LocalDate.now();
         this.time = LocalTime.now();
         this.esp = Esp.createNewEsp(this.id);
+        this.user_id = getUser_id();
     }
+
+   /* public ImageEntity(String name, File file, String user_id) {
+        this.name = name;
+        this.file = file;
+        this.date = LocalDate.now();
+        this.time = LocalTime.now();
+        this.esp = Esp.createNewEsp(this.id);
+        this.user_id = user_id;
+    }*/
 
     public ImageEntity() throws FileNotFoundException {
     }
@@ -62,13 +81,13 @@ public class ImageEntity {
         this.file = file;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
     @Id
-    public Long getId() {
-        return id;
+    public String getId() {
+        return this.id;
     }
 
     public String getName() {
@@ -79,6 +98,14 @@ public class ImageEntity {
         this.name = name;
     }
 
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
     @Override
     public String toString() {
         return "ImageEntity{" +
@@ -87,6 +114,8 @@ public class ImageEntity {
                 ", file=" + file +
                 ", date=" + date +
                 ", time=" + time +
+                ", esp=" + esp +
+                ", history=" + history +
                 '}';
     }
 }

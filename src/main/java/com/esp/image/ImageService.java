@@ -3,6 +3,9 @@ package com.esp.image;
 import com.esp.esp32.EspService;
 import com.esp.models.Esp;
 import com.esp.models.ImageEntity;
+import com.esp.models.User;
+import com.esp.user.UserController;
+import com.esp.user.UserService;
 import net.bytebuddy.utility.RandomString;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -34,6 +37,7 @@ import java.net.http.HttpResponse;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
@@ -44,6 +48,9 @@ public class ImageService {
     private EspService service;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     EntityManagerFactory emf;
 
     public EntityManager getEmf(){
@@ -51,14 +58,24 @@ public class ImageService {
     }
 
     @Transactional
-    public ImageEntity savePictureFile(ImageEntity stream) {
+    public ImageEntity savePictureFile(ImageEntity stream) throws Exception {
         Esp esp = new Esp();
-        esp.setId(stream.getId());
+        var loggedUser_imageEntity_id = userService.getImageEntity_idFromUserTable();
+
+          //"SELECT u FROM users_imageentity u WHERE u.User_user_id = u.imageEntity_id")  //getUser() from users_imageentity where User_user_id = imageEntity_id;    //SELECT u FROM User u WHERE u.username = :username
+
+        if(loggedUser_imageEntity_id == null){
+            throw new Exception("imageEntity_id Not Found from getUseFromImageEntity_UsersTable()");
+        }
+        esp.setId("esp_id");   //    esp.setId(stream.getId());
+        stream.setUser_id(loggedUser_imageEntity_id);
+        stream.setId("imageEntity_id" + LocalTime.now()); //i will write class to generate unique Id
+
         try{
             EntityManager em = getEmf();
             em.getTransaction().begin();
             em.persist(stream);
-            em.persist(esp);
+            //em.persist(esp);
             em.getTransaction().commit();
         } catch(EntityExistsException e) {
             e.printStackTrace();
@@ -66,7 +83,7 @@ public class ImageService {
         return stream;
     }
 
-    private File getImageFileDb(long id) throws FileNotFoundException {
+    private File getImageFileDb(String id) throws FileNotFoundException {
         ImageEntity imgFile = new ImageEntity();
         System.out.println("file retrieved b: , " + imgFile);
         try{
@@ -85,8 +102,8 @@ public class ImageService {
     }
 
     @Transactional
-    public File getImgFileFromDb(long id) throws IOException {
-        if(id < 0){
+    public File getImgFileFromDb(String id) throws IOException {
+        if(id  != null){
             System.out.println("Id cannot be Null"); //throw exception
         }
 

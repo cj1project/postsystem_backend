@@ -1,17 +1,15 @@
 package com.esp.user;
 
-import com.esp.models.Esp;
-import com.esp.models.Role;
-import com.esp.models.User;
-import com.esp.models.UserHistory;
-import com.esp.security.dbAuthWithRole.ResultFromDB;
+import com.esp.models.*;
+import com.esp.classRepOfJoinedTables.UsersRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-import java.sql.Array;
+import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 @Service
@@ -29,14 +27,14 @@ public class UserService implements UserRepository {
 
         User user = null;
         Role role = null;
-        List list = new ArrayList<ResultFromDB>();
+        List list = new ArrayList<UsersRoles>();
         try{
             EntityManager em = getEmf();
             em.getTransaction().begin();
-            Query hql = em.createQuery("SELECT NEW com.esp.security.dbAuthWithRole.ResultFromDB(user, role)" +
+            Query hql = em.createQuery("SELECT NEW com.esp.classRepOfJoinedTables.UsersRoles(user, role)" +
                     "FROM User user, Role role WHERE user.username =?1 AND role.role_id = user.user_id");   //insert into user (id, name) values (?, ?)
            hql.setParameter(1, username);
-            list = (List<ResultFromDB>) hql.getResultList();
+            list = (List<UsersRoles>) hql.getResultList();
             em.getTransaction().commit();
         } catch(EntityExistsException e) {
             e.printStackTrace();
@@ -46,25 +44,7 @@ public class UserService implements UserRepository {
             throw new UsernameNotFoundException("username not found");
         }
 
-        ResultFromDB resultFromDB = (ResultFromDB) list.get(0);
-        /*System.out.println("resultFromDB: " + resultFromDB);
-
-        System.out.println("resultFromDB.getUser(): " + resultFromDB.getUser());
-        System.out.println("resultFromDB.getRole(): " + resultFromDB.getRole());
-
-        user = resultFromDB.getUser();
-        role = resultFromDB.getRole();
-
-        var roleSet = new HashSet<Role>();
-
-        roleSet.add(resultFromDB.getRole());
-
-        System.out.println("roleSet: " + roleSet);
-        System.out.println("role: " + role.getName());
-        var uRole = user.getRoles();
-        for (Role value : uRole) {
-            System.out.println("value: " + value.getName());
-        }*/
+        UsersRoles resultFromDB = (UsersRoles) list.get(0);
 
         return resultFromDB.getUser();
     }
@@ -122,26 +102,24 @@ public class UserService implements UserRepository {
         if(user == null){
             System.out.println("User does not exist");
         }
+        System.out.println("User exist: " + user);
         return user;
     }
 
-    public User userData(long  userId){
+    public User userData(String  userId){
         User user1 = getUser(userId);
         return user1;
     }
 
-    public long registerNewUser(User user) {
-        Esp esp = new Esp();
-        UserHistory hist = new UserHistory();
-        esp.setId(user.getId());
-        hist.setId(user.getId());
+    public String registerNewUser(User user) {
+        System.out.println("user: " + user);
         try{
             EntityManager em = getEmf();
             em.getTransaction().begin();
-            em.merge(user);
-            em.merge(esp);
-            em.merge(hist);
-           // em.merge(role);
+            em.persist(user);
+           // em.persist(esp);
+            //em.persist(imageEntity);
+            em.flush();
             em.getTransaction().commit();
         } catch(EntityExistsException e) {
             e.printStackTrace();
@@ -151,7 +129,7 @@ public class UserService implements UserRepository {
     }
 
 
-    public User getUser(long id){
+    public User getUser(String id){
         User user = null;
         try{
             EntityManager em = getEmf();
@@ -168,6 +146,38 @@ public class UserService implements UserRepository {
             System.out.println("User does not exist");
         }
         return user;
+    }
+
+    public String getImageEntity_idFromUserTable() {
+        String imageEntity_id = UserController.LOGGED_USER_ID;
+        var loggedUserClass = new LoggedUserImpl(this);
+        String user_id = UserController.LOGGED_USER_ID;
+        System.out.println("user_id: " + user_id);
+
+        try{
+            EntityManager em = getEmf();
+            em.getTransaction().begin(); //SELECT user FROM User user JOIN ImageEntity img ON user.user_id = img.imageEntity_id"
+            //em.find(ImageEntity.class, id);
+            /*Query query = em.createQuery("SELECT NEW com.esp.classRepOfJoinedTables.Users_Imageentity(user, imageEntity)" +
+                    "FROM User user, ImageEntity imageEntity WHERE user.imageEntity_id = imageEntity.user_id");*/ //@Query(value = "insert into commit_activity_link (commit_id, activity_id) VALUES (?1, ?2)", nativeQuery = true)
+            Query query = em.createQuery("SELECT user.imageEntityId FROM User user WHERE user.user_id =?1");
+            query.setParameter(1, user_id);
+            imageEntity_id = (String) query.getSingleResult();
+            //user = (User) query.getSingleResult();
+            em.getTransaction().commit();
+        } catch(EntityExistsException e) {
+            e.printStackTrace();
+        }
+
+        if(imageEntity_id == null){
+            System.out.println("imageEntity_id does not exist");
+        }
+
+        System.out.println("imageEntity_id: " + imageEntity_id);
+
+        assert imageEntity_id != null;
+        System.out.println("user: " + imageEntity_id);
+        return imageEntity_id;
     }
 
     @Override

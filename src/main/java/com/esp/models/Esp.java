@@ -2,65 +2,43 @@ package com.esp.models;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Random;
 
 @Entity
 public class Esp {
     @Id
     //@GeneratedValue(strategy = GenerationType.AUTO)
-    @Column
-    private long id;
+    @Column(length = 64)
+    private String ID = "";
     @Column
     private String name;
-    @Column
-    private LocalDate date;
-    @Column
-    private LocalTime time;
-    @OneToOne
-    private User user;
-    @OneToOne
-    private UserHistory history;
+    @Column(name = "created_on")
+    private LocalDate createdOn;    // = LocalDate.now();
 
-    public Esp(long id, String name) {
-        this.id = id;
-        this.name = name;
-        this.date = LocalDate.now();
-        this.time = LocalTime.now();
-    }
-
-    public Esp(long id) {
-        this.id = id;
-        this.date = LocalDate.now();
-        this.time = LocalTime.now();
-        this.user = User.creatNewUserWithNewId(this.id);
-        this.history = UserHistory.creatNewUserWithNewId(this.id);
-    }
+    //private User user;
+    @ManyToOne  //@OneToMany
+    private ImageEntity imageEntity; //List<ImageEntity> imageEntity;
 
     public Esp(String name) {
-        Random rand = new Random();
-        this.id = rand.nextLong();
-        this.date = LocalDate.now();
-        this.time = LocalTime.now();
-        this.user = User.creatNewUserWithNewId(this.id);
-        this.history = UserHistory.creatNewUserWithNewId(this.id);
-    }
-
-    public static Esp createNewEsp(long id) {
-      return new Esp(id);
+        this.ID = getID();
+        this.name = name;
+        this.createdOn = LocalDate.now();
     }
 
     public Esp() {
-        Random rand = new Random();
-        this.id = rand.nextLong();
+        this.createdOn = LocalDate.now();
+        //this.user = User.creatNewUserWithNewId(this.ID);
     }
 
-    public long getId() {
-        return id;
+    public String getID() {
+        return ID;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public static Esp createNewEsp(String id) {
+      return new Esp(id);
+    }
+
+    public void setId(String id) {
+        this.ID = id;
     }
 
     public String getName() {
@@ -72,46 +50,38 @@ public class Esp {
     }
 
     public LocalDate getDate() {
-        return date;
+        return createdOn;
     }
 
     public void setDate(LocalDate date) {
-        this.date = date;
+        this.createdOn = date;
     }
 
-    public LocalTime getTime() {
-        return time;
+    public ImageEntity getImageEntity() {
+        return imageEntity;
     }
 
-    public void setTime(LocalTime time) {
-        this.time = time;
+    public void setImageEntity(ImageEntity imageEntity) {
+        this.imageEntity = imageEntity;
     }
 
     @Override
     public String toString() {
         return "Esp{" +
-                "id=" + id +
+                "id=" + ID +
                 ", name='" + name + '\'' +
-                ", date=" + date +
-                ", time=" + time +
-                ", user=" + user +
-                ", history=" + history +
+                ", date=" + createdOn +
+                //", user=" + user +
+                ", history=" + imageEntity +
                 '}';
     }
 
-    public User getUser() {
+   /* public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
-    }
+    }*/
 
-    public UserHistory getHistory() {
-        return history;
-    }
-
-    public void setHistory(UserHistory history) {
-        this.history = history;
-    }
 }

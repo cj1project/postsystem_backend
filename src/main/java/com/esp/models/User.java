@@ -1,6 +1,10 @@
 package com.esp.models;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.istack.NotNull;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,10 +14,11 @@ import java.util.concurrent.ThreadLocalRandom;
 @Entity
 @Table(name = "users")
 public class User implements Serializable {
+    //private static final long serialVersionUID = 7654875958636458575L;
     @Id
-    @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long user_id;
+    @Column(length = 64)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String user_id;       //long is a large string (mediumtext). It is not suitable for indexing in general.
     @Column(nullable = false, unique = true, length = 45)
     private String username;
     @Column(nullable = false, length = 64)
@@ -38,18 +43,29 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Esp esp;
-    @OneToOne
-    private UserHistory history;
+
+    //@OneToMany//(targetEntity=ImageEntity.class, mappedBy="user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)  //user //ONE-TO-MANY BIDIRECTIONAL, INVERSE SIDE
+    //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+   /* @JoinTable(
+            name="imageEntity_user",  //joined table: Defaults to the concatenated names of the two associated primary entity tables, separated by an underscore.
+            joinColumns=
+                @JoinColumn(name="imageEntity_user_id", referencedColumnName="user_id"), //FK: The foreign key columns of the join table which reference the primary table of the entity owning the association. (I.e. the owning side of the association).
+            inverseJoinColumns=
+                @JoinColumn(name="imageEntity_id", referencedColumnName="id", unique = true) //PK
+    )*/
+    //@OneToMany
+    @Column(nullable = false, unique = true, length = 65)
+    private String imageEntityId;
+
     private boolean enabled;
 
     public User() {
-        this.user_id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);
     }
 
     public User(String username, String password, String firstname, String lastname, String email, int phonenumber,
-                String subscription, Esp esp, UserHistory history) {
+                String subscription, Esp esp, String imageEntity ) {
         //this.user_id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);
         this.username = username;
         this.password = password;
@@ -59,34 +75,28 @@ public class User implements Serializable {
         this.phonenumber = phonenumber;
         this.subscription = subscription;
         this.esp = esp;
-        this.history = history;
+        this.imageEntityId = imageEntity;
     }
 
     public User(String username, String password) {
-        this.user_id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);
         this.username = username;
         this.password = password;
         this.esp = Esp.createNewEsp(user_id);
     }
 
-    public User(long id) {
-        this.user_id = ThreadLocalRandom.current().nextLong(1000000000, 1000000000000L);;
-    }
-
     public User(String name) {
-        Random rand = new Random();
-        this.user_id = rand.nextLong();
+        this.user_id = getId();
         this.username = name;
     }
 
     public User(String username, String password, boolean b, boolean b1, boolean b2, boolean b3, List<GrantedAuthority> user) {
     }
 
-    public long getId() {
+    public String getId() {
         return user_id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.user_id = id;
     }
 
@@ -154,12 +164,12 @@ public class User implements Serializable {
         this.esp = esp;
     }
 
-    public UserHistory getHistory() {
-        return history;
+    public String getImageEntityId() {
+        return imageEntityId;
     }
 
-    public void setHistory(UserHistory history) {
-        this.history = history;
+    public void setImageEntityId(String imageEntity) {
+        this.imageEntityId = imageEntity;
     }
 
     public Set<Role> getRoles() {
@@ -182,11 +192,11 @@ public class User implements Serializable {
                 ", phonenumber=" + phonenumber +
                 ", subscription='" + subscription + '\'' +
                 ", esp=" + esp +
-                ", history=" + history +
+                ", history=" + imageEntityId +
                 '}';
     }
 
-    public static User creatNewUserWithNewId(long id) {
+    public static User creatNewUserWithNewId(String id) {
         return new User(id);
     }
 

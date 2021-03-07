@@ -1,13 +1,13 @@
-package com.esp.security.dbAuthWithRole;
+package com.esp.classRepOfJoinedTables;
 
 import com.esp.models.Role;
 import com.esp.models.User;
 
-public class ResultFromDB {
+public class UsersRoles {
     private User user;
     private Role role;
 
-    public ResultFromDB(User user, Role role) {
+    public UsersRoles(User user, Role role) {
         this.user = user;
         this.role = role;
     }

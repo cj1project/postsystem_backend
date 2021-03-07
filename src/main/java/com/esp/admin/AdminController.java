@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ public class AdminController {
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public long register(@RequestBody User admin){
+    public String register(@RequestBody User admin) throws FileNotFoundException {
         var encodedPassword = passwordEncoder.encode(admin.getPassword());
         admin.setPassword(encodedPassword);
 

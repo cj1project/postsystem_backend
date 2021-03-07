@@ -28,7 +28,7 @@ public class UserHistoryController {
 
     @GetMapping(value = "/get-history", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UserHistory> history(){
-       var userHistory = userService.getUser(528086840360L);
+       var userHistory = userService.getUser("");
         return service.getAllHistory(userHistory);
     }
 

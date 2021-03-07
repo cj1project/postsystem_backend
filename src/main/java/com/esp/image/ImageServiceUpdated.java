@@ -28,7 +28,7 @@ public class ImageServiceUpdated {
     @Autowired
     private ImageService imageService;
 
-    public static long GLOBAL_ID = 0;
+    public static String GLOBAL_ID = "";
 
     public EntityManager getEmf(){
         return emf.createEntityManager();
@@ -42,7 +42,7 @@ public class ImageServiceUpdated {
         return entity.getContent();
     }
 
-    public InputStream getOutputStream(String fileName) throws IOException {
+    public InputStream getOutputStream(String fileName) throws Exception {
         var id = ThreadLocalRandom.current().nextLong(2000000,5000000L);
         var FILE_NAME = "src/main/resources/espImgDir/" + id + "_" + fileName + ".jpg";
         var FILE_URL = "http://192.168.2.124/saved-photo";
@@ -57,8 +57,8 @@ public class ImageServiceUpdated {
         return in;
     }
 
-    public long getImgCreatedId() throws Exception {
-        if(GLOBAL_ID <= 0){
+    public String getImgCreatedId() throws Exception {
+        if(GLOBAL_ID == null || GLOBAL_ID.equals("")){
             throw new Exception("GLOBAL_ID cannot be less than or equal to zero");
         }
         return GLOBAL_ID;
